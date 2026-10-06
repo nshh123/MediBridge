@@ -191,9 +191,6 @@ export default function StockFinderView() {
                 {stockItems.length} batches found
               </span>
             </h2>
-            <span className="text-xs text-slate-500 font-mono">
-              Source: Relational SQL (JOIN pharmacy_inventory + medications + pharmacies)
-            </span>
           </div>
 
           {loading ? (
