@@ -4,11 +4,7 @@ import {
   QrCode,
   ShieldCheck,
   Stethoscope,
-  CheckCircle2,
-  AlertTriangle,
-  Plus,
-  Send,
-  Search
+  Send
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -18,6 +14,9 @@ export default function PrescriptionsView() {
   const [patients, setPatients] = useState([]);
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const canCreatePrescription = user?.role === 'DOCTOR' || user?.role === 'ADMIN';
+  const canVerifyAndDispense = user?.role === 'PHARMACIST' || user?.role === 'ADMIN';
 
   // Pharmacist Verification State
   const [verifyCodeInput, setVerifyCodeInput] = useState('RX-2026-0914');
@@ -54,6 +53,7 @@ export default function PrescriptionsView() {
   }, [authFetch]);
 
   useEffect(() => {
+    setVerifiedData(null);
     loadData();
   }, [loadData, user]);
 
@@ -140,38 +140,46 @@ export default function PrescriptionsView() {
         <div>
           <span className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200 mb-1.5">
             <FileCheck2 className="w-3.5 h-3.5" />
-            Non-Relational Persistence (MongoDB Document Collection: prescriptions)
+            {user?.role === 'PATIENT'
+              ? 'My Personal Digital E-Prescription Wallet'
+              : 'Digital E-Prescription Ledger & Verification'}
           </span>
           <h1 className="text-xl font-extrabold text-slate-900">
-            Digital E-Prescription Ledger & Anti-Counterfeit Verification
+            {user?.role === 'PATIENT'
+              ? `E-Prescriptions Issued to ${user.fullName}`
+              : 'Digital E-Prescription Ledger & Anti-Counterfeit Verification'}
           </h1>
           <p className="text-xs text-slate-600 mt-0.5">
-            Doctors sign hierarchical E-Prescription documents (with vitals, ICD-10 codes, and AI interaction checks). Pharmacists verify the SHA-256 token and dispense against live SQL inventory.
+            {user?.role === 'PATIENT'
+              ? 'Present your RX-2026-XXXX code at any verified MediBridge pharmacy in Kigali to collect your prescribed medication.'
+              : 'Doctors sign hierarchical E-Prescription documents. Pharmacists verify the SHA-256 token and dispense against live SQL inventory.'}
           </p>
         </div>
 
-        {/* Quick Verification Search Bar */}
-        <div className="flex items-center gap-2 shrink-0">
-          <input
-            type="text"
-            value={verifyCodeInput}
-            onChange={(e) => setVerifyCodeInput(e.target.value)}
-            placeholder="Enter RX-2026-XXXX..."
-            className="rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono font-bold uppercase w-44"
-          />
-          <button
-            onClick={() => handleVerifyCode(verifyCodeInput)}
-            disabled={verifying}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
-          >
-            <QrCode className="w-4 h-4" />
-            {verifying ? 'Checking...' : 'Verify Token'}
-          </button>
-        </div>
+        {/* Pharmacist / Admin Quick Verification Search Bar */}
+        {canVerifyAndDispense && (
+          <div className="flex items-center gap-2 shrink-0">
+            <input
+              type="text"
+              value={verifyCodeInput}
+              onChange={(e) => setVerifyCodeInput(e.target.value)}
+              placeholder="Enter RX-2026-XXXX..."
+              className="rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono font-bold uppercase w-44"
+            />
+            <button
+              onClick={() => handleVerifyCode(verifyCodeInput)}
+              disabled={verifying}
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <QrCode className="w-4 h-4" />
+              {verifying ? 'Checking...' : 'Verify Token'}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Verification Result Modal/Drawer if inspected */}
-      {verifiedData && verifiedData.prescription && (
+      {/* Verification Result Drawer (Pharmacist / Admin) */}
+      {canVerifyAndDispense && verifiedData && verifiedData.prescription && (
         <div className="bg-slate-900 text-white rounded-2xl p-5 border border-indigo-500/40 shadow-xl space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2.5">
@@ -194,7 +202,7 @@ export default function PrescriptionsView() {
                   onClick={() => handleDispense(verifiedData.prescription.prescriptionCode)}
                   className="px-4 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold text-xs cursor-pointer"
                 >
-                  Dispense Medication Now (Pharmacist/Admin)
+                  Dispense Medication Now
                 </button>
               )}
               <button
@@ -208,7 +216,7 @@ export default function PrescriptionsView() {
 
           <div className="grid md:grid-cols-2 gap-4 text-xs">
             <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-              <div className="text-slate-400 font-semibold">Prescribing Clinician & Diagnosis</div>
+              <div className="text-slate-400 font-semibold">Prescribing Clinician &amp; Diagnosis</div>
               <div>Doctor: <span className="font-bold text-white">{verifiedData.prescription.doctorName}</span> ({verifiedData.prescription.doctorLicense})</div>
               <div>Facility: <span className="text-slate-300">{verifiedData.prescription.facilityName}</span></div>
               <div>Diagnosis: <span className="text-teal-300 font-medium">{verifiedData.prescription.diagnosisSummary}</span></div>
@@ -248,148 +256,143 @@ export default function PrescriptionsView() {
         </div>
       )}
 
-      {/* Main Grid: Doctor E-Prescription Composer (Left) + MongoDB E-Prescription Cards (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Doctor Composer */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-              <Stethoscope className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="font-bold text-slate-900 text-sm">
-                Issue New E-Prescription
-              </h2>
-              <p className="text-[11px] text-slate-500">
-                RBAC Permission: <code className="text-blue-700">prescription:create</code> (Doctor / Admin)
-              </p>
-            </div>
-          </div>
-
-          {user?.role !== 'DOCTOR' && user?.role !== 'ADMIN' && (
-            <div className="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs">
-              You are currently signed in as <strong>{user?.role}</strong>. Submitting this form as a non-Doctor will demonstrate <strong>RBAC 403 Permission Enforcement</strong>, or switch to <strong>DOCTOR</strong> in the top bar to issue a real E-Prescription!
-            </div>
-          )}
-
-          <form onSubmit={handleCreatePrescription} className="space-y-3 text-xs">
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Select Patient</label>
-              <select
-                value={patientUserId}
-                onChange={(e) => setPatientUserId(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 bg-white"
-              >
-                {patients.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.full_name} ({p.phone}) — {p.organization}
-                  </option>
-                ))}
-              </select>
+      {/* Main Grid: Doctor Composer shown ONLY to Doctor/Admin; Full-Width Ledger shown to Patient/Pharmacist */}
+      <div className={`grid grid-cols-1 ${canCreatePrescription ? 'lg:grid-cols-3' : ''} gap-6`}>
+        {canCreatePrescription && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                <Stethoscope className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-900 text-sm">
+                  Issue New E-Prescription
+                </h2>
+                <p className="text-[11px] text-slate-500">
+                  Authorized Clinician: {user?.fullName}
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-2">
-                <label className="block font-bold text-slate-700 mb-1">Clinical Diagnosis</label>
+            <form onSubmit={handleCreatePrescription} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Select Patient</label>
+                <select
+                  value={patientUserId}
+                  onChange={(e) => setPatientUserId(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 bg-white"
+                >
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.full_name} ({p.phone}) — {p.organization}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="col-span-2">
+                  <label className="block font-bold text-slate-700 mb-1">Clinical Diagnosis</label>
+                  <input
+                    type="text"
+                    required
+                    value={diagnosisSummary}
+                    onChange={(e) => setDiagnosisSummary(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">ICD-10 Code</label>
+                  <input
+                    type="text"
+                    value={icd10Input}
+                    onChange={(e) => setIcd10Input(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Patient Known Allergies (Checked by AI Engine)
+                </label>
+                <input
+                  type="text"
+                  value={allergiesInput}
+                  onChange={(e) => setAllergiesInput(e.target.value)}
+                  placeholder="e.g. Penicillin, Sulfa, NSAID"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Medication to Prescribe</label>
+                <select
+                  value={selectedMedId}
+                  onChange={(e) => setSelectedMedId(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 bg-white"
+                >
+                  {medications.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.brand_name} ({m.generic_name} {m.strength})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Dosage &amp; Administration Schedule</label>
                 <input
                   type="text"
                   required
-                  value={diagnosisSummary}
-                  onChange={(e) => setDiagnosisSummary(e.target.value)}
+                  value={dosageSchedule}
+                  onChange={(e) => setDosageSchedule(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 px-3 py-2"
                 />
               </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">ICD-10 Code</label>
-                <input
-                  type="text"
-                  value={icd10Input}
-                  onChange={(e) => setIcd10Input(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono"
-                />
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Duration (Days)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="90"
+                    value={durationDays}
+                    onChange={(e) => setDurationDays(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Quantity (Packs)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={quantityPrescribed}
+                    onChange={(e) => setQuantityPrescribed(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">
-                Patient Known Allergies (Checked by AI Engine)
-              </label>
-              <input
-                type="text"
-                value={allergiesInput}
-                onChange={(e) => setAllergiesInput(e.target.value)}
-                placeholder="e.g. Penicillin, Sulfa, NSAID"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Medication to Prescribe</label>
-              <select
-                value={selectedMedId}
-                onChange={(e) => setSelectedMedId(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 bg-white"
+              <button
+                type="submit"
+                disabled={submittingRx}
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-1.5 shadow cursor-pointer"
               >
-                {medications.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.brand_name} ({m.generic_name} {m.strength})
-                  </option>
-                ))}
-              </select>
-            </div>
+                <Send className="w-3.5 h-3.5" />
+                {submittingRx ? 'Signing & Publishing...' : 'Sign E-Prescription & Send RabbitMQ Alert'}
+              </button>
+            </form>
+          </div>
+        )}
 
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Dosage & Administration Schedule</label>
-              <input
-                type="text"
-                required
-                value={dosageSchedule}
-                onChange={(e) => setDosageSchedule(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Duration (Days)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="90"
-                  value={durationDays}
-                  onChange={(e) => setDurationDays(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Quantity (Packs)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={quantityPrescribed}
-                  onChange={(e) => setQuantityPrescribed(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={submittingRx}
-              className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-1.5 shadow cursor-pointer"
-            >
-              <Send className="w-3.5 h-3.5" />
-              {submittingRx ? 'Signing & Publishing...' : 'Sign E-Prescription & Send RabbitMQ Alert'}
-            </button>
-          </form>
-        </div>
-
-        {/* Right 2/3: MongoDB E-Prescription Documents List */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* MongoDB E-Prescription Documents List */}
+        <div className={`${canCreatePrescription ? 'lg:col-span-2' : ''} space-y-4`}>
           {loading ? (
             <div className="p-10 text-center bg-white rounded-2xl border border-slate-200 text-slate-500">
-              Loading MongoDB E-Prescription documents...
+              Loading E-Prescription documents...
             </div>
           ) : (
             prescriptions.map((rx) => (
@@ -432,26 +435,28 @@ export default function PrescriptionsView() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setVerifyCodeInput(rx.prescriptionCode);
-                        handleVerifyCode(rx.prescriptionCode);
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1 cursor-pointer"
-                    >
-                      <QrCode className="w-3.5 h-3.5" />
-                      Verify & Match Stock
-                    </button>
-                    {(user?.role === 'PHARMACIST' || user?.role === 'ADMIN') && rx.status === 'ACTIVE' && (
+                  {canVerifyAndDispense && (
+                    <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleDispense(rx.prescriptionCode)}
-                        className="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold cursor-pointer"
+                        onClick={() => {
+                          setVerifyCodeInput(rx.prescriptionCode);
+                          handleVerifyCode(rx.prescriptionCode);
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1 cursor-pointer"
                       >
-                        Dispense
+                        <QrCode className="w-3.5 h-3.5" />
+                        Verify &amp; Match Stock
                       </button>
-                    )}
-                  </div>
+                      {rx.status === 'ACTIVE' && (
+                        <button
+                          onClick={() => handleDispense(rx.prescriptionCode)}
+                          className="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold cursor-pointer"
+                        >
+                          Dispense
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Nested Medication Items Subdocuments */}
@@ -481,7 +486,7 @@ export default function PrescriptionsView() {
                     Vitals Snapshot: BP <strong>{rx.patientVitalsSnapshot?.bloodPressure}</strong> | Weight <strong>{rx.patientVitalsSnapshot?.weightKg}kg</strong> | Allergies: <strong>{rx.patientVitalsSnapshot?.knownAllergies?.join(', ') || 'None'}</strong>
                   </div>
                   <div className="font-mono text-[10px] text-slate-400">
-                    MongoDB _id: {String(rx._id).slice(0, 12)} | Sig: {rx.digitalSignatureHash?.slice(0, 16)}...
+                    Digital Signature: {rx.digitalSignatureHash?.slice(0, 16)}...
                   </div>
                 </div>
               </div>

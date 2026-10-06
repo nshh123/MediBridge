@@ -19,8 +19,8 @@ import { getBrokerDashboardState } from '../services/rabbitmq.js';
 
 const router = express.Router();
 
-// GET /api/system/overview — Comprehensive Hybrid Persistence, RBAC, Performance & Broker Telemetry
-router.get('/overview', authenticateToken, async (req, res) => {
+// GET /api/system/overview — Comprehensive Hybrid Persistence, RBAC, Performance & Broker Telemetry (Admin Only)
+router.get('/overview', authenticateToken, requireRole(['ADMIN']), async (req, res) => {
   const [
     usersCount,
     pharmaciesCount,

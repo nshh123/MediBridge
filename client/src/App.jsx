@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Navbar from './components/Navbar.jsx';
+import React, { useState, useEffect } from 'react';
+import Navbar, { NAV_ITEMS_BY_ROLE } from './components/Navbar.jsx';
 import LoginOAuthModal from './components/LoginOAuthModal.jsx';
 import StockFinderView from './components/StockFinderView.jsx';
 import PrescriptionsView from './components/PrescriptionsView.jsx';
@@ -11,9 +11,19 @@ import ToastContainer from './components/ToastContainer.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 
 export default function App() {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('stock');
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const currentRole = user?.role || 'PATIENT';
+
+  // Automatically redirect to 'stock' if the user switches to a role that cannot access the current tab
+  useEffect(() => {
+    const tabConfig = NAV_ITEMS_BY_ROLE.find((item) => item.id === activeTab);
+    if (tabConfig && !tabConfig.allowedRoles.includes(currentRole)) {
+      setActiveTab('stock');
+    }
+  }, [currentRole, activeTab]);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
@@ -26,16 +36,22 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
         {loading ? (
           <div className="p-16 text-center text-slate-500 font-medium">
-            Initializing MediBridge Hybrid Persistence & OAuth2 Session...
+            Initializing MediBridge Hybrid Persistence &amp; OAuth2 Session...
           </div>
         ) : (
           <>
             {activeTab === 'stock' && <StockFinderView />}
             {activeTab === 'prescriptions' && <PrescriptionsView />}
-            {activeTab === 'inventory' && <InventoryManagerView />}
+            {activeTab === 'inventory' && ['PHARMACIST', 'ADMIN'].includes(currentRole) && (
+              <InventoryManagerView />
+            )}
             {activeTab === 'ai' && <AiClinicalAssistant />}
-            {activeTab === 'broker' && <RabbitMqConsoleView />}
-            {activeTab === 'architecture' && <SystemArchitectureView />}
+            {activeTab === 'broker' && currentRole === 'ADMIN' && (
+              <RabbitMqConsoleView />
+            )}
+            {activeTab === 'architecture' && currentRole === 'ADMIN' && (
+              <SystemArchitectureView />
+            )}
           </>
         )}
       </main>

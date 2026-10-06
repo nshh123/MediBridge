@@ -21,19 +21,54 @@ const ROLE_BADGE_STYLES = {
   ADMIN: 'bg-purple-500/15 text-purple-300 border-purple-500/30'
 };
 
+export const NAV_ITEMS_BY_ROLE = [
+  {
+    id: 'stock',
+    label: 'Stock Finder',
+    icon: Pill,
+    allowedRoles: ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
+  },
+  {
+    id: 'prescriptions',
+    label: 'E-Prescriptions',
+    icon: FileCheck2,
+    allowedRoles: ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
+  },
+  {
+    id: 'inventory',
+    label: 'Inventory',
+    icon: PackageCheck,
+    allowedRoles: ['PHARMACIST', 'ADMIN']
+  },
+  {
+    id: 'ai',
+    label: 'AI Triage',
+    icon: BrainCircuit,
+    allowedRoles: ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
+  },
+  {
+    id: 'broker',
+    label: 'RabbitMQ',
+    icon: Radio,
+    allowedRoles: ['ADMIN']
+  },
+  {
+    id: 'architecture',
+    label: 'Hybrid DB & RBAC',
+    icon: Database,
+    allowedRoles: ['ADMIN']
+  }
+];
+
 export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
   const { user, authMechanism, demoAccounts, loginWithOAuth2Flow, loginWithPassword } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [switchingRole, setSwitchingRole] = useState(false);
 
-  const navItems = [
-    { id: 'stock', label: 'Stock Finder', icon: Pill },
-    { id: 'prescriptions', label: 'E-Prescriptions', icon: FileCheck2 },
-    { id: 'inventory', label: 'Inventory', icon: PackageCheck },
-    { id: 'ai', label: 'AI Triage', icon: BrainCircuit },
-    { id: 'broker', label: 'RabbitMQ', icon: Radio },
-    { id: 'architecture', label: 'Hybrid DB & RBAC', icon: Database }
-  ];
+  const currentRole = user?.role || 'PATIENT';
+  const visibleNavItems = NAV_ITEMS_BY_ROLE.filter((item) =>
+    item.allowedRoles.includes(currentRole)
+  );
 
   // Pick 1 representative demo account per unique RBAC role
   const uniqueRoleAccounts = ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
@@ -85,16 +120,16 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
           </div>
         </div>
 
-        {/* Center Segmented Navigation Pills */}
+        {/* Center Segmented Navigation Pills (Filtered by RBAC Role) */}
         <nav className="hidden lg:flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 gap-0.5 min-w-0">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
                   active
                     ? 'bg-teal-500 text-slate-950 shadow-sm font-bold'
                     : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
@@ -191,7 +226,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
       {/* Responsive Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-slate-950 border-t border-slate-800 px-4 py-3 space-y-1.5">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
             return (
