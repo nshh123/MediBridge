@@ -232,7 +232,7 @@ export default function InventoryManagerView() {
               type="submit"
               className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-teal-600 text-white font-bold transition cursor-pointer"
             >
-              Insert Batch into Relational SQL Table
+              Insert Batch Into Pharmacy Inventory
             </button>
           </form>
         </div>
@@ -241,7 +241,7 @@ export default function InventoryManagerView() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
             <h3 className="font-bold text-slate-900 text-sm">
-              Relational SQL Table: <code className="text-teal-700">pharmacy_inventory</code> ({inventory.length} rows)
+              <code className="text-teal-700">pharmacy_inventory</code> ({inventory.length} rows)
             </h3>
             <span className="text-xs text-slate-500">Sorted by Expiry Date</span>
           </div>
