@@ -57,13 +57,8 @@ export default function App() {
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-4 px-4 text-xs text-slate-500 mt-12">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>
-            <strong>MediBridge Rwanda</strong> — Web Technology Final Project (2026-2027) • Instructor: Jeremie U. Tuyisenge
-          </div>
-          <div className="font-mono text-[11px] text-slate-400">
-            Stack: React + Node/Express + PostgreSQL/SQLite + MongoDB + RabbitMQ + OAuth2 + RBAC
-          </div>
+        <div className="max-w-7xl mx-auto text-center sm:text-left">
+          <strong>MediBridge Rwanda</strong> — Right Medicine, Right Pharmacy, Right Now.
         </div>
       </footer>
 
