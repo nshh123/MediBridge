@@ -35,7 +35,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
     { id: 'architecture', label: 'Hybrid DB & RBAC', icon: Database }
   ];
 
-  // Pick exactly 1 representative demo account per unique RBAC role (PATIENT, DOCTOR, PHARMACIST, ADMIN)
+  // Pick 1 representative demo account per unique RBAC role
   const uniqueRoleAccounts = ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
     .map((roleName) => demoAccounts.find((a) => a.role_name === roleName))
     .filter(Boolean);
@@ -53,35 +53,40 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
     }
   };
 
+  // Keep displayed name concise in the top bar so it never overflows
+  const shortUserName = user?.fullName
+    ? user.fullName.split('(')[0].split(',')[0].trim()
+    : '';
+
   return (
-    <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md text-white shadow-lg border-b border-slate-800/80">
+    <header className="sticky top-0 z-40 w-full overflow-x-hidden bg-slate-950/95 backdrop-blur-md text-white shadow-lg border-b border-slate-800/80">
       {/* Main Primary Navigation Row */}
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 h-15 flex items-center justify-between gap-2">
         {/* Brand Identity */}
         <div
           onClick={() => setActiveTab('stock')}
-          className="flex items-center gap-3 cursor-pointer group shrink-0"
+          className="flex items-center gap-2.5 cursor-pointer group shrink-0"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:scale-105 transition">
-            <Pill className="w-5 h-5 text-slate-950 stroke-[2.5]" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:scale-105 transition">
+            <Pill className="w-4 h-4 text-slate-950 stroke-[2.5]" />
           </div>
           <div className="leading-tight">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <span className="font-extrabold text-base tracking-tight text-white">
                 MediBridge
               </span>
-              <span className="hidden xl:inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30 whitespace-nowrap">
-                Rwanda
+              <span className="hidden 2xl:inline-block text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-300 border border-teal-500/30">
+                RW
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden sm:block whitespace-nowrap">
-              E-Prescription &amp; Stock Network
+            <p className="text-[10px] text-slate-400 hidden xl:block whitespace-nowrap">
+              Smart Pharmacy Network
             </p>
           </div>
         </div>
 
         {/* Center Segmented Navigation Pills */}
-        <nav className="hidden lg:flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 gap-1">
+        <nav className="hidden lg:flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 gap-0.5 min-w-0">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
@@ -89,7 +94,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
                   active
                     ? 'bg-teal-500 text-slate-950 shadow-sm font-bold'
                     : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
@@ -103,15 +108,18 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
         </nav>
 
         {/* Right User Session & Auth Studio Button */}
-        <div className="hidden md:flex items-center gap-2.5 shrink-0">
+        <div className="hidden md:flex items-center gap-2 shrink-0">
           {user && (
-            <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-semibold text-slate-200 whitespace-nowrap">
-                {user.fullName}
+            <div
+              className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded-xl"
+              title={user.fullName}
+            >
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="text-xs font-semibold text-slate-200 max-w-[120px] truncate">
+                {shortUserName}
               </span>
               <span
-                className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border whitespace-nowrap ${
+                className={`px-1.5 py-0.5 rounded text-[10px] font-extrabold border whitespace-nowrap ${
                   ROLE_BADGE_STYLES[user.role] || ''
                 }`}
               >
@@ -122,9 +130,9 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
 
           <button
             onClick={onOpenAuthModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition whitespace-nowrap cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition whitespace-nowrap cursor-pointer"
           >
-            <UserCheck className="w-3.5 h-3.5" />
+            <UserCheck className="w-3.5 h-3.5 shrink-0" />
             <span>OAuth2 Studio</span>
           </button>
         </div>
@@ -140,15 +148,15 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
       </div>
 
       {/* Clean Secondary Subbar for RBAC Role Switching & Auth Telemetry */}
-      <div className="bg-slate-900/70 border-t border-slate-800/70 px-4 py-1.5 text-xs">
+      <div className="bg-slate-900/70 border-t border-slate-800/70 px-4 py-1 text-xs">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-slate-400">
-            <span className="inline-flex items-center gap-1 text-teal-400 font-semibold whitespace-nowrap">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Active Auth Protocol:
+          <div className="flex items-center gap-2 text-slate-400 min-w-0">
+            <span className="inline-flex items-center gap-1 text-teal-400 font-semibold whitespace-nowrap text-[11px]">
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+              Auth Protocol:
             </span>
-            <span className="inline-flex items-center gap-1 text-slate-300 font-mono text-[11px] bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800 whitespace-nowrap">
-              <KeyRound className="w-3 h-3 text-amber-400" />
+            <span className="inline-flex items-center gap-1 text-slate-300 font-mono text-[11px] bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800 truncate">
+              <KeyRound className="w-3 h-3 text-amber-400 shrink-0" />
               {authMechanism}
             </span>
           </div>
@@ -156,7 +164,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
           {/* Deduplicated 4-Role Switcher */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-slate-400 text-[11px] font-medium hidden sm:inline">
-              Quick RBAC Role Switch:
+              Quick RBAC Switch:
             </span>
             {uniqueRoleAccounts.map((acc) => {
               const isActive = user?.role === acc.role_name;
@@ -165,7 +173,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
                   key={acc.id}
                   disabled={switchingRole}
                   onClick={() => handleQuickRoleSwitch(acc)}
-                  className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition whitespace-nowrap cursor-pointer ${
+                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition whitespace-nowrap cursor-pointer ${
                     isActive
                       ? 'bg-teal-500 text-slate-950 shadow-sm'
                       : 'bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60'
