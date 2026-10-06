@@ -163,7 +163,6 @@ export default function AiClinicalAssistant() {
               disabled={loading}
               className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center justify-center gap-2 shadow cursor-pointer"
             >
-              <Sparkles className="w-4 h-4" />
               {loading ? 'Analyzing Interactions...' : 'Run AI Pharmacokinetic & Triage Analysis'}
             </button>
           </form>
@@ -176,7 +175,7 @@ export default function AiClinicalAssistant() {
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                 <div>
                   <span className="font-mono text-xs font-bold text-indigo-600">
-                    Session: {result.sessionCode} (MongoDB _id: {String(result.mongoDocumentId).slice(0, 10)})
+                    Session: {result.sessionCode}
                   </span>
                   <h3 className="text-lg font-extrabold text-slate-900">
                     Clinical Safety & Interaction Report
@@ -249,10 +248,10 @@ export default function AiClinicalAssistant() {
             </div>
           )}
 
-          {/* MongoDB Saved Triage Documents */}
+          {/* Recent AI Triage Documents */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <h3 className="font-bold text-slate-900 text-sm mb-3">
-              Recent AI Triage Documents Stored in MongoDB (<code className="text-indigo-600">ai_triage_reports</code>)
+              Recent AI Triage Documents
             </h3>
             <div className="space-y-2.5">
               {history.map((h) => (
