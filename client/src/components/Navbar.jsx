@@ -182,20 +182,9 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
         </button>
       </div>
 
-      {/* Clean Secondary Subbar for RBAC Role Switching & Auth Telemetry */}
+      {/* Clean Secondary Subbar for RBAC Role Switching */}
       <div className="bg-slate-900/70 border-t border-slate-800/70 px-4 py-1 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-slate-400 min-w-0">
-            <span className="inline-flex items-center gap-1 text-teal-400 font-semibold whitespace-nowrap text-[11px]">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-              Auth Protocol:
-            </span>
-            <span className="inline-flex items-center gap-1 text-slate-300 font-mono text-[11px] bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800 truncate">
-              <KeyRound className="w-3 h-3 text-amber-400 shrink-0" />
-              {authMechanism}
-            </span>
-          </div>
-
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-end gap-2">
           {/* Deduplicated 4-Role Switcher */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-slate-400 text-[11px] font-medium hidden sm:inline">
