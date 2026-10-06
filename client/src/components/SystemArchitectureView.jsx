@@ -89,11 +89,7 @@ export default function SystemArchitectureView() {
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-                  <Table className="w-3 h-3" />
-                  Relational Persistence Layer (SQL)
-                </span>
-                <h2 className="text-base font-extrabold text-slate-900 mt-1">
+                <h2 className="text-base font-extrabold text-slate-900">
                   {overview.relationalDb.engine}
                 </h2>
               </div>
@@ -141,11 +137,7 @@ export default function SystemArchitectureView() {
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
-                  <FileJson className="w-3 h-3" />
-                  Non-Relational Persistence Layer (MongoDB)
-                </span>
-                <h2 className="text-base font-extrabold text-slate-900 mt-1">
+                <h2 className="text-base font-extrabold text-slate-900">
                   {overview.nonRelationalDb.engine}
                 </h2>
               </div>

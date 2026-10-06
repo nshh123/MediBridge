@@ -78,10 +78,6 @@ export default function RabbitMqConsoleView() {
       {/* Header Banner */}
       <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30 mb-2">
-            <Radio className="w-3.5 h-3.5 animate-pulse" />
-            Event-Driven RabbitMQ Message Broker (AMQP 0-9-1)
-          </span>
           <h1 className="text-2xl font-extrabold">
             RabbitMQ Exchange, Consumer Queues & SMS/Email Dispatch Monitor
           </h1>

@@ -138,12 +138,6 @@ export default function PrescriptionsView() {
       {/* Top Info Banner */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200 mb-1.5">
-            <FileCheck2 className="w-3.5 h-3.5" />
-            {user?.role === 'PATIENT'
-              ? 'My Personal Digital E-Prescription Wallet'
-              : 'Digital E-Prescription Ledger & Verification'}
-          </span>
           <h1 className="text-xl font-extrabold text-slate-900">
             {user?.role === 'PATIENT'
               ? `E-Prescriptions Issued to ${user.fullName}`

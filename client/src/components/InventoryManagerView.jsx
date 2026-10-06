@@ -105,10 +105,6 @@ export default function InventoryManagerView() {
     <div className="space-y-6">
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200 mb-1.5">
-            <PackageCheck className="w-3.5 h-3.5" />
-            Pharmacist Inventory & Near-Expiry Redistribution Hub
-          </span>
           <h1 className="text-xl font-extrabold text-slate-900">
             Pharmacy Batch Ledger & Anti-Wastage Expiry Alerts
           </h1>
