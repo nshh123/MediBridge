@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import {
   getBrokerDashboardState,
+  getNotificationsForUser,
   registerSseClient,
   dispatchSmsNotification,
   dispatchEmailNotification,
@@ -9,6 +10,15 @@ import {
 } from '../services/rabbitmq.js';
 
 const router = express.Router();
+
+// GET /api/broker/my-notifications — Personalized RabbitMQ SMS, Email & Alert inbox for the logged-in user
+router.get('/my-notifications', authenticateToken, (req, res) => {
+  const notifications = getNotificationsForUser(req.user);
+  res.json({
+    count: notifications.length,
+    notifications
+  });
+});
 
 // GET /api/broker/state — Returns RabbitMQ exchanges, queues, metrics, and message log
 router.get('/state', authenticateToken, (req, res) => {

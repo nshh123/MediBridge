@@ -8,7 +8,61 @@ import {
   insertAiTriageReport
 } from './mongoDb.js';
 import { RBAC_ROLE_DEFINITIONS } from '../middleware/rbacMiddleware.js';
-import { publishBrokerEvent } from '../services/rabbitmq.js';
+import { publishBrokerEvent, getBrokerDashboardState } from '../services/rabbitmq.js';
+
+async function seedInitialBrokerMessagesIfNeeded() {
+  if (getBrokerDashboardState().recentMessages.length > 0) return;
+
+  await publishBrokerEvent(
+    'notification.sms.prescription_issued',
+    {
+      phone: '+250 788 412 091',
+      recipient: 'Aline Uwase (+250 788 412 091)',
+      subject: 'SMS E-Prescription Token RX-2026-0914',
+      message: '[MediBridge RW] Dr. Eric Mugisha (King Faisal Hospital) issued E-Prescription RX-2026-0914. In stock at Goodlife Pharmacy Kimironko (8,500 RWF).',
+      actorName: 'Dr. Eric Mugisha',
+      actorRole: 'DOCTOR'
+    },
+    { sync: true, skipAudit: true }
+  );
+
+  await publishBrokerEvent(
+    'notification.email.reservation_confirmed',
+    {
+      email: 'aline.patient@medibridge.rw',
+      recipient: 'Aline Uwase <aline.patient@medibridge.rw>',
+      subject: 'Medication Reservation Confirmed — RSV-8941 (Goodlife Pharmacy)',
+      message: 'Your reservation RSV-8941 for Augmentin 625mg (x2 packs) is held at Goodlife Pharmacy Kimironko until 18:30 today.',
+      actorName: 'Aline Uwase',
+      actorRole: 'PATIENT'
+    },
+    { sync: true, skipAudit: true }
+  );
+
+  await publishBrokerEvent(
+    'prescription.created',
+    {
+      recipient: 'MediBridge Pharmacy Dispensing Network',
+      subject: 'New E-Prescription Signed: RX-2026-0914',
+      message: 'Dr. Eric Mugisha signed RX-2026-0914 for Aline Uwase (Augmentin 625mg + Panadol Advance 500mg, AI Risk: LOW).',
+      actorName: 'Dr. Eric Mugisha',
+      actorRole: 'DOCTOR'
+    },
+    { sync: true, skipAudit: true }
+  );
+
+  await publishBrokerEvent(
+    'inventory.expiry_alert',
+    {
+      recipient: 'Kigali Hospital & Clinic Redistribution Network',
+      subject: 'Near-Expiry Cold-Chain Alert: Lantus SoloStar Pen (25% Discount)',
+      message: 'Batch LAN-2602C (9 pens remaining at Goodlife Pharmacy Kimironko) expires 2026-11-18. 25% redistribution discount activated.',
+      actorName: 'Chantal Mukamana, BPharm',
+      actorRole: 'PHARMACIST'
+    },
+    { sync: true, skipAudit: true }
+  );
+}
 
 export async function seedDatabasesIfNeeded() {
   const existingRole = await queryOne('SELECT id FROM roles LIMIT 1');
@@ -17,6 +71,7 @@ export async function seedDatabasesIfNeeded() {
       `UPDATE users SET full_name = ? WHERE id = 'usr_admin_01'`,
       ['Sam Musoni']
     );
+    await seedInitialBrokerMessagesIfNeeded();
     return;
   }
 
@@ -528,43 +583,7 @@ export async function seedDatabasesIfNeeded() {
   }
 
   // 8. Publish initial RabbitMQ events so the Broker Dashboard has live history immediately
-  await publishBrokerEvent(
-    'notification.sms.prescription_issued',
-    {
-      phone: '+250 788 412 091',
-      recipient: 'Aline Uwase (+250 788 412 091)',
-      subject: 'SMS E-Prescription Token RX-2026-0914',
-      message: '[MediBridge RW] Dr. Eric Mugisha (King Faisal Hospital) issued E-Prescription RX-2026-0914. In stock at Goodlife Pharmacy Kimironko (8,500 RWF).',
-      actorName: 'Dr. Eric Mugisha',
-      actorRole: 'DOCTOR'
-    },
-    { sync: true }
-  );
-
-  await publishBrokerEvent(
-    'notification.email.reservation_confirmed',
-    {
-      email: 'aline.patient@medibridge.rw',
-      recipient: 'Aline Uwase <aline.patient@medibridge.rw>',
-      subject: 'Medication Reservation Confirmed — RSV-8941 (Goodlife Pharmacy)',
-      message: 'Your reservation RSV-8941 for Augmentin 625mg (x2 packs) is held at Goodlife Pharmacy Kimironko until 18:30 today.',
-      actorName: 'Aline Uwase',
-      actorRole: 'PATIENT'
-    },
-    { sync: true }
-  );
-
-  await publishBrokerEvent(
-    'inventory.expiry_alert',
-    {
-      recipient: 'Kigali Hospital & Clinic Redistribution Network',
-      subject: 'Near-Expiry Cold-Chain Alert: Lantus SoloStar Pen (25% Discount)',
-      message: 'Batch LAN-2602C (9 pens remaining at Goodlife Pharmacy Kimironko) expires 2026-11-18. 25% redistribution discount activated.',
-      actorName: 'Chantal Mukamana, BPharm',
-      actorRole: 'PHARMACIST'
-    },
-    { sync: true }
-  );
+  await seedInitialBrokerMessagesIfNeeded();
 
   console.log('[Seed] Database & RabbitMQ initial state ready.');
 }

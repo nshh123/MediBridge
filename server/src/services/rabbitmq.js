@@ -241,3 +241,51 @@ export function getBrokerDashboardState() {
     recentMessages: messageHistory.slice(0, 60)
   };
 }
+
+export function getNotificationsForUser(user) {
+  if (!user) return [];
+
+  const role = user.role;
+  const fullNameLower = (user.fullName || '').toLowerCase();
+  const emailLower = (user.email || '').toLowerCase();
+  const phoneClean = (user.phone || '').replace(/\s+/g, '');
+
+  return messageHistory.filter((msg) => {
+    if (role === 'ADMIN') return true;
+
+    const recipientLower = (msg.recipient || '').toLowerCase();
+    const bodyLower = (msg.bodyPreview || '').toLowerCase();
+    const payloadPhone = (msg.payload?.phone || '').replace(/\s+/g, '');
+    const payloadEmail = (msg.payload?.email || '').toLowerCase();
+
+    const isDirectToUser =
+      (fullNameLower && recipientLower.includes(fullNameLower)) ||
+      (emailLower && (recipientLower.includes(emailLower) || payloadEmail === emailLower)) ||
+      (phoneClean && payloadPhone && payloadPhone === phoneClean);
+
+    if (role === 'PATIENT') {
+      return isDirectToUser;
+    }
+
+    if (role === 'DOCTOR') {
+      return (
+        isDirectToUser ||
+        (fullNameLower && bodyLower.includes(fullNameLower)) ||
+        msg.routingKey.startsWith('prescription.') ||
+        msg.routingKey.startsWith('inventory.expiry')
+      );
+    }
+
+    if (role === 'PHARMACIST') {
+      return (
+        isDirectToUser ||
+        msg.routingKey.startsWith('prescription.') ||
+        msg.routingKey.startsWith('inventory.') ||
+        msg.routingKey.includes('reservation')
+      );
+    }
+
+    return isDirectToUser;
+  });
+}
+

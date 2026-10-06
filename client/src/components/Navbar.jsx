@@ -4,10 +4,9 @@ import {
   FileCheck2,
   PackageCheck,
   BrainCircuit,
+  Bell,
   Radio,
   Database,
-  ShieldCheck,
-  KeyRound,
   UserCheck,
   Menu,
   X
@@ -44,6 +43,12 @@ export const NAV_ITEMS_BY_ROLE = [
     id: 'ai',
     label: 'AI Triage',
     icon: BrainCircuit,
+    allowedRoles: ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
+  },
+  {
+    id: 'notifications',
+    label: 'Notifications',
+    icon: Bell,
     allowedRoles: ['PATIENT', 'DOCTOR', 'PHARMACIST', 'ADMIN']
   },
   {

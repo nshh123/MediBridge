@@ -5,6 +5,7 @@ import StockFinderView from './components/StockFinderView.jsx';
 import PrescriptionsView from './components/PrescriptionsView.jsx';
 import InventoryManagerView from './components/InventoryManagerView.jsx';
 import AiClinicalAssistant from './components/AiClinicalAssistant.jsx';
+import NotificationsView from './components/NotificationsView.jsx';
 import RabbitMqConsoleView from './components/RabbitMqConsoleView.jsx';
 import SystemArchitectureView from './components/SystemArchitectureView.jsx';
 import ToastContainer from './components/ToastContainer.jsx';
@@ -46,6 +47,7 @@ export default function App() {
               <InventoryManagerView />
             )}
             {activeTab === 'ai' && <AiClinicalAssistant />}
+            {activeTab === 'notifications' && <NotificationsView />}
             {activeTab === 'broker' && currentRole === 'ADMIN' && (
               <RabbitMqConsoleView />
             )}
