@@ -1,0 +1,35 @@
+{
+  "name": "medibridge-webtech-project",
+  "version": "1.0.0",
+  "description": "MediBridge: Smart E-Prescription, Pharmacy Stock Finder & Expiry Alert Network (Web Technology Final Project)",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "server": "node server/src/index.js",
+    "client": "vite",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/src/index.js",
+    "test": "node --test server/tests/api.test.js",
+    "seed": "node server/src/config/seedRunner.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.475.0",
+    "mongoose": "^8.9.5",
+    "pg": "^8.13.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.6",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.0.6",
+    "vite": "^6.1.0"
+  }
+}
