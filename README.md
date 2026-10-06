@@ -1,7 +1,8 @@
 # MediBridge Rwanda — Smart E-Prescription, Live Pharmacy Stock Finder & Expiry Alert Network
 
 > **Web Technology Final Course Project (2026–2027)**  
-> **Faculty of Information Technology — Instructor: Jeremie U. Tuyisenge**
+> **Faculty of Information Technology , Instructor: Jeremie U. Tuyisenge** <br>
+> **Student: Musoni Nshuti Sam , ID: 28857**
 
 **MediBridge** solves a critical everyday healthcare challenge faced by thousands of patients, doctors, and pharmacists: **locating scarce essential medications across pharmacies in real time, preventing counterfeit or unsafe prescriptions, and eliminating medication wastage from near-expiry stock.**
 
