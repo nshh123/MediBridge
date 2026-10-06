@@ -1,0 +1,63 @@
+# ============================================================================
+# MediBridge Docker Compose Stack (Bonus Point 1: DevOps & Hybrid Persistence)
+# Orchestrates:
+#   1. PostgreSQL 16 (Relational Operational DB)
+#   2. MongoDB 7 (Non-Relational Document Store)
+#   3. RabbitMQ 3 Management (Message Broker for SMS, Email & Domain Events)
+#   4. MediBridge Full-Stack App (Node.js/Express API + React SPA)
+# ============================================================================
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: medibridge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: medibridge
+      POSTGRES_PASSWORD: medibridge_password
+      POSTGRES_DB: medibridge_relational
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:7
+    container_name: medibridge-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: medibridge-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  medibridge-app:
+    build: .
+    container_name: medibridge-web
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      POSTGRES_URI: postgresql://medibridge:medibridge_password@postgres:5432/medibridge_relational
+      MONGODB_URI: mongodb://mongodb:27017/medibridge_documents
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      JWT_SECRET: medibridge-production-jwt-secret-2026
+    depends_on:
+      - postgres
+      - mongodb
+      - rabbitmq
+
+volumes:
+  pgdata:
+  mongodata:

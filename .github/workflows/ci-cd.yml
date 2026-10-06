@@ -1,0 +1,36 @@
+name: MediBridge CI/CD Pipeline (QA & Deployment)
+
+on:
+  push:
+    branches: [ main, "feat/**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-assurance-and-build:
+    name: Automated QA Tests & Production Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run Automated Integration & RBAC Security Tests (Bonus Point 2)
+        env:
+          SQLITE_MEMORY: 'true'
+        run: npm test
+
+      - name: Build Responsive React Frontend Bundle
+        run: npm run build
+
+      - name: Verify Production Bundle Artifacts
+        run: test -f dist/index.html
