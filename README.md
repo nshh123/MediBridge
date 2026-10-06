@@ -44,7 +44,7 @@ You can switch between all 4 **RBAC Roles** in **1 click** using the top bar ins
 | **PATIENT** | Aline Uwase | `aline.patient@medibridge.rw` | Google OAuth 2.0 / JWT | Search live stock, filter by RSSB/MMI/Radiant insurance, reserve medicine (6h hold), receive SMS/Email tokens |
 | **DOCTOR** | Dr. Eric Mugisha | `dr.mugisha@medibridge.rw` | Google OAuth 2.0 / JWT | Issue SHA-256 signed E-Prescriptions (`RX-2026-XXXX`) in MongoDB with automatic AI drug-interaction safety checks |
 | **PHARMACIST** | Chantal Mukamana | `chantal.pharma@medibridge.rw` | Local JWT / OAuth 2.0 | Manage SQL inventory batches, verify & dispense E-Prescriptions, broadcast `-25%` near-expiry alerts via RabbitMQ |
-| **ADMIN** | Jeremie Admin | `admin@medibridge.rw` | GitHub OAuth 2.0 / JWT | Manage user RBAC roles, inspect SQL vs. MongoDB documents live, monitor RabbitMQ queues & LRU cache metrics |
+| **ADMIN** | Sam Musoni | `admin@medibridge.rw` | GitHub OAuth 2.0 / JWT | Manage user RBAC roles, inspect SQL vs. MongoDB documents live, monitor RabbitMQ queues & LRU cache metrics |
 
 ---
 
