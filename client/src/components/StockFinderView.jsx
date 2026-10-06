@@ -305,16 +305,22 @@ export default function StockFinderView() {
                     {item.operating_hours}
                   </span>
 
-                  <button
-                    onClick={() => handleReserve(item)}
-                    disabled={reservingId === item.inventory_id || item.stock_quantity <= 0}
-                    className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-teal-600 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    {reservingId === item.inventory_id
-                      ? 'Reserving...'
-                      : 'Reserve 6h Pickup'}
-                  </button>
+                  {user?.role === 'PATIENT' ? (
+                    <button
+                      onClick={() => handleReserve(item)}
+                      disabled={reservingId === item.inventory_id || item.stock_quantity <= 0}
+                      className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-teal-600 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                      {reservingId === item.inventory_id
+                        ? 'Reserving...'
+                        : 'Reserve 6h Pickup'}
+                    </button>
+                  ) : (
+                    <span className="text-[11px] font-semibold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-200">
+                      Batch: {item.batch_number}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
@@ -322,32 +328,36 @@ export default function StockFinderView() {
         )}
       </div>
 
-      {/* Floating Bottom-Right Reservations Cart Pill */}
-      <button
-        onClick={() => setCartOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-3 px-4 py-3 rounded-full bg-slate-900 hover:bg-teal-600 text-white shadow-2xl border border-slate-700 transition-all hover:scale-105 cursor-pointer group"
-      >
-        <div className="relative flex items-center justify-center">
-          <ShoppingBag className="w-5 h-5 text-teal-400 group-hover:text-white transition" />
-          <span className=" -top-2 -right-2 ml-1 px-1.5 py-0.5 rounded-full bg-teal-500 group-hover:bg-slate-950 text-slate-950 group-hover:text-teal-300 text-[10px] font-extrabold">
-            {reservations.length}
-          </span>
-        </div>
-        <div className="text-left leading-tight pr-1">
-          <div className="text-xs font-extrabold whitespace-nowrap">
-            Active Reservations
+      {/* Floating Bottom-Right Cart Pill (Visible to PATIENT as 'Active Reservations' and PHARMACIST/ADMIN as 'Pending Pickups'; hidden for DOCTOR) */}
+      {(user?.role === 'PATIENT' || user?.role === 'PHARMACIST' || user?.role === 'ADMIN') && (
+        <button
+          onClick={() => setCartOpen(true)}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-3 px-4 py-3 rounded-full bg-slate-900 hover:bg-teal-600 text-white shadow-2xl border border-slate-700 transition-all hover:scale-105 cursor-pointer group"
+        >
+          <div className="relative flex items-center justify-center">
+            <ShoppingBag className="w-5 h-5 text-teal-400 group-hover:text-white transition" />
+            <span className="-top-2 -right-2 ml-1 px-1.5 py-0.5 rounded-full bg-teal-500 group-hover:bg-slate-950 text-slate-950 group-hover:text-teal-300 text-[10px] font-extrabold">
+              {user?.role === 'PATIENT' ? reservations.length : activeReservedCount}
+            </span>
           </div>
-          <div className="text-[10px] text-slate-300 group-hover:text-teal-100 font-mono whitespace-nowrap">
-            {activeReservedCount} pending • {totalReservedRwf.toLocaleString()} RWF
+          <div className="text-left leading-tight pr-1">
+            <div className="text-xs font-extrabold whitespace-nowrap">
+              {user?.role === 'PATIENT' ? 'Active Reservations' : 'Pending Pickups'}
+            </div>
+            <div className="text-[10px] text-slate-300 group-hover:text-teal-100 font-mono whitespace-nowrap">
+              {user?.role === 'PATIENT'
+                ? `${activeReservedCount} pending • ${totalReservedRwf.toLocaleString()} RWF`
+                : `${activeReservedCount} awaiting collection`}
+            </div>
           </div>
-        </div>
-      </button>
+        </button>
+      )}
 
-      {/* Slide-Over Reservations Cart Drawer */}
+      {/* Slide-Over Reservations / Pickups Drawer */}
       {cartOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex justify-end">
           <div className="bg-white w-full max-w-md h-full shadow-2xl border-l border-slate-200 flex flex-col justify-between animate-in slide-in-from-right">
-            {/* Cart Header */}
+            {/* Drawer Header */}
             <div className="p-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center text-teal-300">
@@ -355,12 +365,12 @@ export default function StockFinderView() {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-base">
-                    Active Stock Reservations
+                    {user?.role === 'PATIENT' ? 'Active Stock Reservations' : 'Pending Patient Pickups'}
                   </h3>
                   <p className="text-xs text-slate-400">
                     {user?.role === 'PATIENT'
                       ? 'Your reserved medicines & SMS pickup codes'
-                      : 'Pharmacy reservations & fulfillment queue'}
+                      : 'Verify patient pickup PIN & mark medication dispensed'}
                   </p>
                 </div>
               </div>
@@ -372,14 +382,15 @@ export default function StockFinderView() {
               </button>
             </div>
 
-            {/* Cart Items List */}
+            {/* Drawer Items List */}
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
               {reservations.length === 0 ? (
                 <div className="text-xs text-slate-500 py-16 text-center space-y-2">
                   <ShoppingBag className="w-8 h-8 text-slate-300 mx-auto" />
-                  <p>No active reservations yet.</p>
-                  <p className="text-[11px] text-slate-400">
-                    Click "Reserve 6h Pickup" on any medication card to add it here.
+                  <p>
+                    {user?.role === 'PATIENT'
+                      ? 'No active reservations yet.'
+                      : 'No pending patient pickups right now.'}
                   </p>
                 </div>
               ) : (
@@ -439,7 +450,7 @@ export default function StockFinderView() {
               )}
             </div>
 
-            {/* Cart Footer Summary */}
+            {/* Drawer Footer Summary */}
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs">
               <div>
                 <div className="text-slate-500">Pending Pickup Total</div>
@@ -451,7 +462,7 @@ export default function StockFinderView() {
                 onClick={() => setCartOpen(false)}
                 className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold cursor-pointer"
               >
-                Continue Browsing
+                Close
               </button>
             </div>
           </div>
