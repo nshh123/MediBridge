@@ -57,8 +57,18 @@ export default function App() {
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-4 px-4 text-xs text-slate-500 mt-12">
-        <div className="max-w-7xl mx-auto text-center sm:text-left">
-          <strong>MediBridge Rwanda</strong> — Right Medicine, Right Pharmacy, Right Now.
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div>
+            <strong>MediBridge Rwanda</strong> — Right Medicine, Right Pharmacy, Right Now.
+          </div>
+          <a
+            href="https://github.com/nshh123"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-teal-600 font-semibold transition"
+          >
+            Copyright @nshh123
+          </a>
         </div>
       </footer>
 
