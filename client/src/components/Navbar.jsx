@@ -99,8 +99,8 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
 
   return (
     <header className="sticky top-0 z-40 w-full overflow-x-hidden bg-slate-950/95 backdrop-blur-md text-white shadow-lg border-b border-slate-800/80">
-      {/* Row 1: Brand Identity (Left) + Segmented Navigation Pills (Right) */}
-      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+      {/* Row 1: Brand Identity (Left) + Centered Navigation Pills (Middle) + OAuth2 Studio (Right) */}
+      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
         <div
           onClick={() => setActiveTab('stock')}
           className="flex items-center gap-2.5 cursor-pointer group shrink-0"
@@ -123,8 +123,8 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
           </div>
         </div>
 
-        {/* Desktop Segmented Navigation Pills */}
-        <nav className="hidden lg:flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 gap-1">
+        {/* Centered Segmented Navigation Pills */}
+        <nav className="hidden lg:flex items-center justify-center bg-slate-900/90 p-1 rounded-xl border border-slate-800/90 gap-1 mx-auto">
           {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const active = activeTab === item.id;
@@ -145,6 +145,17 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
           })}
         </nav>
 
+        {/* Right: OAuth2 Studio Button */}
+        <div className="hidden lg:flex items-center shrink-0">
+          <button
+            onClick={onOpenAuthModal}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition whitespace-nowrap cursor-pointer"
+          >
+            <UserCheck className="w-3.5 h-3.5 shrink-0" />
+            <span>OAuth2 Studio</span>
+          </button>
+        </div>
+
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -155,8 +166,8 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
         </button>
       </div>
 
-      {/* Row 2: Active User Session (Left) + Quick RBAC Switch & OAuth2 Studio (Right) */}
-      <div className="bg-slate-900/75 border-t border-slate-800/70 px-4 py-1.5 text-xs">
+      {/* Row 2: Active User Session (Left) + Quick RBAC Switch (Right) */}
+      <div className="bg-slate-900/75 border-t border-slate-800/70 px-4 py-1 text-xs">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           {/* Left: Current Active User Badge */}
           <div className="flex items-center gap-2">
@@ -180,7 +191,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
             )}
           </div>
 
-          {/* Right: 4-Role Switcher + OAuth2 Studio Button */}
+          {/* Right: 4-Role Switcher */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-slate-400 text-[11px] font-medium hidden sm:inline">
               Quick RBAC Switch:
@@ -203,14 +214,6 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAuthModal }) {
                 </button>
               );
             })}
-
-            <button
-              onClick={onOpenAuthModal}
-              className="ml-1 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition whitespace-nowrap cursor-pointer"
-            >
-              <UserCheck className="w-3 h-3 shrink-0" />
-              <span>OAuth2 Studio</span>
-            </button>
           </div>
         </div>
       </div>
