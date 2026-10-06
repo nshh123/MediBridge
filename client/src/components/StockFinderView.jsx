@@ -107,40 +107,13 @@ export default function StockFinderView() {
     <div className="space-y-6">
       {/* Hero Banner & Search Bar */}
       <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 rounded-2xl p-6 text-white shadow-xl border border-teal-500/20">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Stop Visiting 5 Pharmacies for Out-of-Stock Medicine
-            </h1>
-            <p className="text-sm text-slate-300 mt-1.5 max-w-2xl">
-              Search verified stock across Gasabo, Nyarugenge, and Kicukiro pharmacies, filter by RSSB/MMI/Radiant insurance acceptance, and reserve scarce medicines with instant RabbitMQ SMS pickup codes.
-            </p>
-          </div>
-
-          {/* Performance & LRU Cache Status Badge (Req 6) */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 shrink-0 flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-              cacheStatus === 'HIT' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
-            }`}>
-              <Zap className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
-                Query Performance (Req 6)
-              </div>
-              <div className="text-xs font-mono font-bold flex items-center gap-2 mt-0.5">
-                <span>X-Cache: {cacheStatus}</span>
-                <button
-                  onClick={fetchStock}
-                  className="text-teal-400 hover:text-teal-300 inline-flex items-center gap-1 cursor-pointer"
-                  title="Re-run query to observe LRU Cache HIT"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  Refresh
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="mb-5">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Stop Visiting 5 Pharmacies for Out-of-Stock Medicine
+          </h1>
+          <p className="text-sm text-slate-300 mt-1.5 max-w-2xl">
+            Search verified stock across Gasabo, Nyarugenge, and Kicukiro pharmacies, filter by RSSB/MMI/Radiant insurance acceptance, and reserve scarce medicines with instant RabbitMQ SMS pickup codes.
+          </p>
         </div>
 
         {/* Filter Controls Grid */}
