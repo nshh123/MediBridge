@@ -1,7 +1,8 @@
 # MediBridge Rwanda — Smart E-Prescription, Live Pharmacy Stock Finder & Expiry Alert Network
 
 > **Web Technology Final Course Project (2026–2027)**  
-> **Faculty of Information Technology — Instructor: Jeremie U. Tuyisenge**
+> **Faculty of Information Technology , Instructor: Jeremie U. Tuyisenge** <br>
+> **Student: Musoni Nshuti Sam , ID: 28857**
 
 **MediBridge** solves a critical everyday healthcare challenge faced by thousands of patients, doctors, and pharmacists: **locating scarce essential medications across pharmacies in real time, preventing counterfeit or unsafe prescriptions, and eliminating medication wastage from near-expiry stock.**
 
@@ -43,7 +44,7 @@ You can switch between all 4 **RBAC Roles** in **1 click** using the top bar ins
 | **PATIENT** | Aline Uwase | `aline.patient@medibridge.rw` | Google OAuth 2.0 / JWT | Search live stock, filter by RSSB/MMI/Radiant insurance, reserve medicine (6h hold), receive SMS/Email tokens |
 | **DOCTOR** | Dr. Eric Mugisha | `dr.mugisha@medibridge.rw` | Google OAuth 2.0 / JWT | Issue SHA-256 signed E-Prescriptions (`RX-2026-XXXX`) in MongoDB with automatic AI drug-interaction safety checks |
 | **PHARMACIST** | Chantal Mukamana | `chantal.pharma@medibridge.rw` | Local JWT / OAuth 2.0 | Manage SQL inventory batches, verify & dispense E-Prescriptions, broadcast `-25%` near-expiry alerts via RabbitMQ |
-| **ADMIN** | Jeremie Admin | `admin@medibridge.rw` | GitHub OAuth 2.0 / JWT | Manage user RBAC roles, inspect SQL vs. MongoDB documents live, monitor RabbitMQ queues & LRU cache metrics |
+| **ADMIN** | Sam Musoni | `admin@medibridge.rw` | GitHub OAuth 2.0 / JWT | Manage user RBAC roles, inspect SQL vs. MongoDB documents live, monitor RabbitMQ queues & LRU cache metrics |
 
 ---
 

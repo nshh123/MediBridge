@@ -13,6 +13,10 @@ import { publishBrokerEvent } from '../services/rabbitmq.js';
 export async function seedDatabasesIfNeeded() {
   const existingRole = await queryOne('SELECT id FROM roles LIMIT 1');
   if (existingRole) {
+    await execute(
+      `UPDATE users SET full_name = ? WHERE id = 'usr_admin_01'`,
+      ['Sam Musoni']
+    );
     return;
   }
 
@@ -78,7 +82,7 @@ export async function seedDatabasesIfNeeded() {
     },
     {
       id: 'usr_admin_01',
-      fullName: 'Jeremie Admin (System Overseer)',
+      fullName: 'Sam Musoni',
       email: 'admin@medibridge.rw',
       phone: '+250 788 100 001',
       roleId: 'role_admin',
