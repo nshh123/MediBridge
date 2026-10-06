@@ -109,14 +109,10 @@ export default function StockFinderView() {
       <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 rounded-2xl p-6 text-white shadow-xl border border-teal-500/20">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-300 border border-teal-400/30 mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              Real-Time Kigali Pharmacy Stock & Price Comparison
-            </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Stop Visiting 5 Pharmacies for Out-of-Stock Medicine
             </h1>
-            <p className="text-sm text-slate-300 mt-1 max-w-2xl">
+            <p className="text-sm text-slate-300 mt-1.5 max-w-2xl">
               Search verified stock across Gasabo, Nyarugenge, and Kicukiro pharmacies, filter by RSSB/MMI/Radiant insurance acceptance, and reserve scarce medicines with instant RabbitMQ SMS pickup codes.
             </p>
           </div>
@@ -215,10 +211,10 @@ export default function StockFinderView() {
       {/* Main Content Grid: Stock Results (Left 2/3) + Active Reservations (Right 1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-bold text-slate-800 text-base flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-bold text-slate-800 text-base flex items-center gap-2.5">
               <span>Verified Pharmacy Inventory Batches</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold whitespace-nowrap">
                 {stockItems.length} batches found
               </span>
             </h2>
